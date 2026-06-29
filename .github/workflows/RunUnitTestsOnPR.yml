@@ -1,40 +1,42 @@
-name: Run tests and publish results on PR
+name: .NET Build & Test
 
 on:
   push:
-    branches:
-      - master
-
-permissions:
-  contents: read
-  checks: write
-  pull-requests: write
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  run-tests:
-    name: Run Tests
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
+      # Step 1: Checkout the repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
+      # Step 2: Setup .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.x'
+          dotnet-version: '8.0.x' # Change to your target version
 
+      # Step 3: Restore dependencies
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Run tests
-        run: |
-          mkdir -p test-results
-          dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
-        continue-on-error: true
+      # Step 4: Build the project
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-      - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+      # Step 5: Run tests
+      - name: Test
+        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test_results.trx"
+
+      # Step 6: Upload test results (optional)
+      - name: Upload test results
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          files: test-results/test-results.trx
+          name: test-results
+          path: '**/TestResults/*.trx'
