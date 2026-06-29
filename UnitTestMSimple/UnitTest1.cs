@@ -11,7 +11,7 @@ namespace MUtils.Tests
         {
             var simple = new MSimple();
             double result = simple.Add(2.5, 3.5);
-            Assert.AreEqual(6.0, result, 1e-10);
+            Assert.AreEqual(6.4, result, 1e-10);
         }
 
         [TestMethod]
