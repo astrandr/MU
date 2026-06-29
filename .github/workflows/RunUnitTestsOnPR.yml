@@ -1,40 +1,40 @@
-name: Run tests and publish resutls on PR
+name: Run tests and publish results on PR
 
 on:
-	push:
-		branches:
-			. master
+  push:
+    branches:
+      - master
 
 permissions:
-	contents: read
-	checks: write
-	pull-requests: write
+  contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
-	run-tests:
-	name: Run Tests
-	runs-on: ubuntu-latest
+  run-tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
 
-	steps:
-	- name: Check out code
-	uses: actions/checkout@v4
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
 
-	- name: Set up .NET
-	uses: actions/setup-dotnet@v3
-	with:
-		dotnet-version: '9.x'
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.x'
 
-	- name: Restore dependencies
-	run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-	- name: Run tests
-	run: |
-		mkdir -p test-results
-		dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
-	continue-on-error: true
+      - name: Run tests
+        run: |
+          mkdir -p test-results
+          dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
+        continue-on-error: true
 
-	- name: Publish test results
-	uses: EnricoMi/publish-unit-test-result-action@v2
-	if: always()
-	with:
-		files: test-results/test-results.trx
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results/test-results.trx
