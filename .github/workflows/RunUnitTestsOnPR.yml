@@ -1,7 +1,7 @@
 name: Run tests and publish resutls on PR
 
 on:
-	pull_request:
+	push:
 		branches:
 			. master
 
