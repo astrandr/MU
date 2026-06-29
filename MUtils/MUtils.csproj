@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="MSimple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UtilsB.cs" />
+    <Compile Include="UtilsC.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

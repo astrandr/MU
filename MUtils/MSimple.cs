@@ -6,5 +6,11 @@
         {
             return a + b;
         }
+
+        public void MethodA()
+        {
+            var ub = new UtilsB();
+        }
+
     }
 }
