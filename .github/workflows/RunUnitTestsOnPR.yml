@@ -1,4 +1,4 @@
-name: .NET Build & Test
+name: .NET Framework Build & Test
 
 on:
   push:
@@ -8,35 +8,30 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Setup .NET SDK
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x' # Change to your target version
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
-      # Step 3: Restore dependencies
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
 
-      # Step 4: Build the project
+      - name: Restore NuGet packages
+        run: nuget restore MU.sln
+
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: msbuild MU.sln /p:Configuration=Release
 
-      # Step 5: Run tests
-      - name: Test
-        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test_results.trx"
+      - name: Run MSTest tests
+        run: vstest.console.exe UnitTestMSimple\bin\Release\UnitTestMSimple.dll /Logger:trx
 
-      # Step 6: Upload test results (optional)
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: '**/TestResults/*.trx'
+          path: '**/*.trx'
